@@ -1,52 +1,56 @@
-# Base
-FROM centos:latest
+FROM debian:latest
 
-# Prep
-RUN yum -y install nc net-tools nmap file tcpdump unzip
-RUN adduser -u 1000 -g 10 centos
-RUN adduser -u 1010 -g 10 web
-WORKDIR /home/centos
+ENV container docker
+ENV DEBIAN_FRONTEND noninteractive
+
+# prep
+RUN adduser -u 1000 kevin; \
+    adduser -u 1020 tfc; \
+    addgroup sus && usermod -aG sus kevin; \
+    apt-get update ; \
+    apt-get install -y systemd systemd-sysv netcat curl wget file unzip nginx sudo binutils procps; \
+    apt-get clean ; \
+    usermod -aG sudo tfc; \
+    sed -i '/^%sudo/ s/ALL$/ NOPASSWD:ALL/' /etc/sudoers; \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* ; \
+    rm -rf /lib/systemd/system/multi-user.target.wants/* ; \
+    rm -rf /etc/systemd/system/*.wants/* ; \
+    rm -rf /lib/systemd/system/local-fs.target.wants/* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*udev* ; \
+    rm -rf /lib/systemd/system/sockets.target.wants/*initctl* ; \
+    rm -rf /lib/systemd/system/sysinit.target.wants/systemd-tmpfiles-setup* ; \
+    rm -rf /lib/systemd/system/systemd-update-utmp*
+
+VOLUME [ "/sys/fs/cgroup" ]
 
 # 01
-RUN mkdir flag_dir && touch flag_dir/FLAG1_31337
+RUN mkdir -p /home/.hidden_flag_dir/ && echo FLAG1_42448 > /home/.hidden_flag_dir/.data
 
 # 02
-RUN mkdir -p .hidden_flag_dir/abc/123/.nothingtoseehere/data && echo FLAG2_42448 > .hidden_flag_dir/abc/123/.nothingtoseehere/data/flag
+RUN echo FLAG2_63992 | base64 > /tmp/flag2
 
 # 03
-RUN cat /dev/random | head -100 > /tmp/.flag3 && echo 'FLAG3_55352' >> /tmp/.flag3 && cat /dev/random | head -100 >> /tmp/.flag3
+RUN cat /dev/random | head -1000 > /var/log/flaglog && echo 'FLAG3_55352' >> /var/log/flaglog && cat /dev/random | head -1000 >> /var/log/flaglog
 
-# 04
-RUN echo FLAG4_63992 | base64 > /tmp/.flag4
+# 04 - see service
 
-# 05 - NOOP - see CMD
+# 05
+RUN sed -i 's/^user www-data/user kevin/' /etc/nginx/nginx.conf;
+RUN sed -i '/^sus:/ s/$/,FLAG5_41442/' /etc/group
 
-# 06
-RUN adduser -u 1001 -g 10 www && sed -i '/^wheel:/ s/$/www,FLAG6_41442/' /etc/group
+# 06 - see service
+RUN sed -i '/root \/var\/www\/html;/a add_header Set-Cookie "flag6_28257";' /etc/nginx/sites-enabled/default
 
-# 07
-RUN echo FLAG7_55241 > /home/www/file && chown www /home/www/file && chmod 660 /home/www/file && chmod a+rx /home/www && chgrp wheel /home/www/file && touch /home/www/private && chmod 600 /home/www/private
+# 07 
+COPY oddfile /etc/cron.d/
 
-# 08 - NOOP
+# 08  
+RUN echo FLAG8_67923 >> /etc/timezone
 
-# 09 - see CMD
-COPY flag_http /tmp/.flag_http
+# 09 
+RUN echo FLAG9_49457 >> /lib/systemd/system/nginx.service
 
-# 10 - NOOP - see CMD
-
-# 11 - NOOP - Python script
-
-# 12
-ADD oddfile.zip oddfile.zip
-
-# 14
-ADD flag.dmp flag.dmp
-
-# User
-USER centos
-
-# Command
-CMD nc -lkp 31337 -c 'echo FLAG_11314' & nc -lkp 8080 -c 'cat /tmp/.flag_http' & bash
-
-# Ports
-EXPOSE 31337 8080
+# start our service
+COPY flag_http /var/www/html/index.nginx-debian.html
+COPY boot.target /etc/systemd/system/
+CMD ["/lib/systemd/systemd", "--unit=boot.target"]
