@@ -1,5 +1,7 @@
 # A simple CTF for assessing Linux familiarity
 
+A fork of https://github.com/IPvFletch/KiddoCTF
+
 See CLUES.md and SOLVES.md.
 
 To get set up:
