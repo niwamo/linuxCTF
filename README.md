@@ -8,7 +8,7 @@ To get set up:
 git clone https://github.com/niwamo/linuxCTF; cd linuxCTF
 $image = "tfc/easy-ctf:1.0"
 docker build -t $image .
-docker save -o easyCTF.tar tfc/easy-ctf:1.0
+docker save -o easyCTF.tar $image
 
 # Provide the students with only easyCTF.tar, CLUES.md, and the following commands:
 docker load --input easyCTF.tar
