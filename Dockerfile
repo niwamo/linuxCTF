@@ -4,8 +4,8 @@ ENV container docker
 ENV DEBIAN_FRONTEND noninteractive
 
 # prep
-RUN adduser -u 1000 kevin; \
-    adduser -u 1020 tfc; \
+RUN useradd kevin -u 1000; \
+    useradd tfc -u 1020; \
     addgroup sus && usermod -aG sus kevin; \
     apt-get update ; \
     apt-get install -y systemd systemd-sysv netcat curl wget file unzip nginx sudo binutils procps; \
