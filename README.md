@@ -1,8 +1,12 @@
-# A simple CTF for assessing Linux familiarity
+# LinuxCTF
 
-A fork of https://github.com/IPvFletch/KiddoCTF
+A simple, containerized Linux CTF. Intended to assess a student's familiarity with basic Linux
+commands, tools, and services.
 
-See CLUES.md and SOLVES.md.
+Inspired by [KiddoCTF](https://github.com/IPvFletch/KiddoCTF).
+
+~~See CLUES.md and SOLVES.md.~~<br/>
+Write-up available [here](https://nicholas-morris.com/articles/linuxCTF).
 
 To get set up:
 
