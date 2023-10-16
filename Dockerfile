@@ -8,7 +8,7 @@ RUN useradd kevin -u 1000; \
     useradd tfc -u 1020; \
     addgroup sus && usermod -aG sus kevin; \
     apt-get update ; \
-    apt-get install -y systemd systemd-sysv netcat curl wget file gzip nginx sudo binutils procps; \
+    apt-get install -y systemd systemd-sysv netcat-traditional curl wget file gzip nginx sudo binutils procps; \
     apt-get clean ; \
     usermod -aG sudo tfc; \
     sed -i '/^%sudo/ s/ALL$/ NOPASSWD:ALL/' /etc/sudoers; \
